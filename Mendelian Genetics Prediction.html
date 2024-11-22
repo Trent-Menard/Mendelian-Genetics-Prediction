@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Mendelian Genetics Prediction</title>
+</head>
+<body style="background-image: url('https://getwallpapers.com/wallpaper/full/2/5/e/359721.jpg'); color:white; font-family: Helvetica, sans-serif;">
+
+	<h3>Hi, want to predict your offspring's traits?</h3>
+
+	<form id="eyeColorForm">
+		<div>
+			<label for="dominantTrait">Dominant trait:</label>
+			<input type="text" name="dominantTrait" id="dominantTrait"/>
+
+			<label for="parent1AlleleType">Allele type?</label>
+			<select id="parent1AlleleType">
+				<option value="homozygousDominant">Homozygous Dominant</option>
+				<option value="heterozygous">Heterozygous</option>
+				<option value="homozygousRecessive">Homozygous Recessive</option>
+			</select>
+		</div>
+
+		<div>
+			<label for="recessiveTrait">Recessive trait:</label>
+			<input type="text" name="recessiveTrait" id="recessiveTrait"/>
+
+			<label for="parent2AlleleType">Allele type?</label>
+			<select id="parent2AlleleType">
+				<option value="homozygousDominant">Homozygous Dominant</option>
+				<option value="heterozygous">Heterozygous</option>
+				<option value="homozygousRecessive">Homozygous Recessive</option>
+			</select>
+		</div>
+
+		<button type="submit" style="margin-top: 10px;">Submit (make prediction!)</button>
+	</form>
+
+	<p id="dominantTraitParagraph">Dominant trait (B)</p>
+	<p id="recessiveTraitParagraph">Recessive trait (b)</p>
+
+	<style> table {border:3px solid black; border-collapse: collapse;} td, th {border:3px solid black; padding: 10px;} .alleleHeader {color:darkred;}</style>
+
+	<table>
+		<tr>
+			<td></td>
+			<th id="parent1Allele1Header" class="alleleHeader"></th>
+			<th id="parent1Allele2Header" class="alleleHeader"></th>
+		</tr>
+		<tr>
+			<th id="parent2Allele1Header" class="alleleHeader"></th>
+			<td id="genomeTopLeft"></td>
+			<td id="genomeTopRight"></td>
+		</tr>
+		<tr>
+			<th id="parent2Allele2Header" class="alleleHeader"></th>
+			<td id="genomeBottomLeft"></td>
+			<td id="genomeBottomRight"></td>
+		</tr>
+	</table>
+
+	<h3>What's this?</h3>
+	<p>This is a punnet square. It's used to predict an offspring's genotype (genetic makeup).</p>
+	<p>You may enter dominant and recessive traits, e.g. brown eyes (dom) and blue eyes (rec), or leave it empty to be generic.</p>
+	<p>It'll predict the genotypes. Note that this specific punnet square is called a monohybrid (1 trait) cross. There's also dihybrid (2 traits), etc.</p>
+	<p>If you need a reminder...</p>
+	<ul>
+		<li>Homozygous dominant = same alleles, both dominant (BB)</li>
+		<li>Heterozygous = different alleles, one dominant & one recessive (Bb)</li>
+		<li>Homozygous recessive = same alleles, both recessive (bb)</li>
+	</ul>
+
+	<h3>Go on...</h3>
+	<p>We humans have 46 chromosomes. 23 from our mother and 23 from our father. These chromosomes contain units of hereditary, or genes. Alleles are different versions of a gene. Diploid organisms have 2 alleles per character, and each parent contributes 1 allele per character. Within a character, traits are either dominant or recessive. According to the Law of Segregation, alleles seperate when gametes (reproductive organs; male: sperm, female: egg) form, and each contain 1 copy of each (haploid) allele. Another important law is the Law of Independent Sortment: different alleles will sort independently of each other, with the exception of alleles containing loci near the same chromosome.</p>
+
+	<script type="text/javascript">
+		const form = document.getElementById('eyeColorForm');
+
+		form.addEventListener("submit", (e) => {
+			e.preventDefault();
+
+			const parent1AlleleType = document.getElementById('parent1AlleleType').value;
+			const parent2AlleleType = document.getElementById('parent2AlleleType').value;
+
+			let parent1Allele1, parent1Allele2, parent2Allele1, parent2Allele2;
+
+			if (parent1AlleleType === "homozygousDominant") {
+				parent1Allele1 = parent1Allele2 = "B";
+			} else if (parent1AlleleType === "heterozygous") {
+				parent1Allele1 = "B";
+				parent1Allele2 = "b";
+			} else if (parent1AlleleType === "homozygousRecessive") {
+				parent1Allele1 = parent1Allele2 = "b";
+			}
+
+			if (parent2AlleleType === "homozygousDominant") {
+				parent2Allele1 = parent2Allele2 = "B";
+			} else if (parent2AlleleType === "heterozygous") {
+				parent2Allele1 = "B";
+				parent2Allele2 = "b";
+			} else if (parent2AlleleType === "homozygousRecessive") {
+				parent2Allele1 = parent2Allele2 = "b";
+			}
+
+			document.getElementById("parent1Allele1Header").innerText = parent1Allele1;
+			document.getElementById("parent1Allele2Header").innerText = parent1Allele2;
+
+			document.getElementById("parent2Allele1Header").innerText = parent2Allele1;
+			document.getElementById("parent2Allele2Header").innerText = parent2Allele2;
+
+			document.getElementById("genomeTopLeft").innerText = swapIfLowerThenUppercase(parent1Allele1, parent2Allele1);
+			document.getElementById("genomeTopRight").innerText = swapIfLowerThenUppercase(parent1Allele2, parent2Allele1);
+			document.getElementById("genomeBottomLeft").innerText = swapIfLowerThenUppercase(parent1Allele1, parent2Allele2);
+			document.getElementById("genomeBottomRight").innerText = swapIfLowerThenUppercase(parent1Allele2, parent2Allele2);
+
+			// if 1st is lowercase and 2nd is uppercase, swap
+			function swapIfLowerThenUppercase(leftChar, rightChar) {
+				return (leftChar === leftChar.toLowerCase() && 
+					rightChar === rightChar.toUpperCase() ? rightChar + leftChar : leftChar + rightChar);
+			}
+		});
+
+	</script>
+</body>
+</html>
